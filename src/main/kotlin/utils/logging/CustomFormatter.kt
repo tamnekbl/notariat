@@ -38,7 +38,7 @@ class CustomFormatter : Formatter() {
                         !it.className.contains(this::class.java.name)
             }?.let {
                 val className = it.className.substringAfterLast('.')
-                val methodName = it.methodName.substringBefore("\$") // ← удаляем всё после $
+                val methodName = it.methodName.substringBefore("$") // ← удаляем всё после $
                 "$className:$methodName"
             } ?: "Unknown"
     }

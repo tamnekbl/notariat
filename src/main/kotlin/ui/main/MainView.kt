@@ -1,42 +1,74 @@
 package ui.main
 
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.NavigationRail
+import androidx.compose.material.NavigationRailItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import cafe.adriel.voyager.core.model.rememberNavigatorScreenModel
-import cafe.adriel.voyager.core.registry.rememberScreen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.navigator.CurrentScreen
+import cafe.adriel.voyager.navigator.Navigator
 import ui.NavTarget
+import ui.NavTarget.Companion.menu_items
 import utils.logging.Log
 
 
 
 @Composable
-fun MainView() {
-    val navigator = LocalNavigator.currentOrThrow
-    var text by remember { mutableStateOf("Hello, World!") }
-    val model = navigator.rememberNavigatorScreenModel { MainModel() }
-
-
+fun NavHost(navigator: Navigator) {
     DisposableEffect(Unit) {
-        Log.e(model.toString())
-
-        model.start()
         onDispose {
-            Log.i("Dispose")
-            model.onDispose()
+            Log.d("Dispose")
         }
     }
 
+    val navBarItems = menu_items.take(4)
 
-    Button(onClick = { navigator.push(NavTarget.Second()) }) {
-        Text("Перейти ко второму экрану")
+    Row {
+        NavigationView(
+            navBarItems = navBarItems,
+            current = navigator.lastItem as NavTarget?
+        ) {
+            navigator.push(it)
+        }
 
+        Box(
+            modifier = Modifier.weight(1f),
+        ) {
+            CurrentScreen()
+        }
+    }
+
+}
+
+@Composable
+fun NavigationView(
+    modifier: Modifier = Modifier,
+    navBarItems: List<NavTarget>,
+    current: NavTarget?,
+    onItemClick: (NavTarget) -> Unit
+){
+    NavigationRail(
+        modifier = Modifier
+            .then(modifier),
+        backgroundColor = MaterialTheme.colors.background
+    ){
+        navBarItems.forEach { item ->
+            val isCurrent = current?.route == item.route
+            NavigationRailItem(
+                selected = isCurrent,
+                onClick = { onItemClick(item) },
+                icon = { Icon(item.icon, item.route) },
+                label = {
+                    Text(
+                        text = item.name
+                    )
+                }
+            )
+        }
     }
 }

@@ -1,24 +1,24 @@
 package ui.main
 
 
+import androidx.compose.runtime.mutableStateListOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import kotlinx.coroutines.Dispatchers
+import db.Client
+import db.Queries
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.koin.core.component.KoinComponent
 import utils.logging.Log
 
 
 class MainModel() : ScreenModel{
 
     private var execution: Job = Job()
+    val clients = mutableStateListOf<Client>()
 
     override fun onDispose() {
         super.onDispose()
@@ -34,5 +34,13 @@ class MainModel() : ScreenModel{
             }
             .catch { Log.e(it) }
             .launchIn(screenModelScope)
+    }
+
+    fun getClients(){
+        flow { emit(Queries().getAll()) }
+            .onEach { clients.addAll(it) }
+            .catch { Log.e(it) }
+            .launchIn(screenModelScope)
+
     }
 }

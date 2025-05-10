@@ -20,22 +20,20 @@ dependencies {
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
-    val voyagerVersion = "1.1.0-beta03"
-    val coroutinesVersion = "1.7.3"
 
     // voyager
-    implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-koin:${voyagerVersion}")
-    implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-kodein:${voyagerVersion}")
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.postgresql)
+    implementation(libs.logback.classic)
 
-    //DI
-    implementation("io.insert-koin:koin-core:3.5.0")
-    implementation("io.insert-koin:koin-compose:1.0.4") // по желанию
+    implementation(libs.voyager.navigator)
+    implementation(libs.voyager.screenmodel)
 
-    //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:${coroutinesVersion}")
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.swing)
+
 
     implementation(compose.desktop.currentOs)
 }

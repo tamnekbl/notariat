@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.screen.Screen
+import ui.clients.ClientsView
 import ui.utils.EmptyView
 
 sealed class NavTarget(
@@ -22,7 +23,7 @@ sealed class NavTarget(
     }
     class Clients : NavTarget("Clients", Icons.Default.Person, "clients") {
         @Composable
-        override fun Content() = EmptyView()
+        override fun Content() = ClientsView()
     }
     class Services : NavTarget("Services", Icons.Default.List, "services") {
         @Composable

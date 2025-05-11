@@ -1,30 +1,26 @@
-package ui.utils
+package ui.clients
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import ui.utils.Toolbar
 
 @Composable
-fun EmptyView() {
+fun ClientsView() {
     Scaffold(
         topBar = {
-            Toolbar(title = "Empty")
+            Toolbar(title = "Clients")
         }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Text("Вкладка не существует")
         }
     }

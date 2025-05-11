@@ -16,8 +16,6 @@ import ui.NavTarget
 import ui.NavTarget.Companion.menu_items
 import utils.logging.Log
 
-
-
 @Composable
 fun NavHost(navigator: Navigator) {
     DisposableEffect(Unit) {
@@ -33,7 +31,7 @@ fun NavHost(navigator: Navigator) {
             navBarItems = navBarItems,
             current = navigator.lastItem as NavTarget?
         ) {
-            navigator.push(it)
+            if (navigator.lastItem != it) navigator.replace(it)
         }
 
         Box(

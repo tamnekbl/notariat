@@ -23,13 +23,8 @@ fun main() = application {
         state = rememberWindowState(placement = WindowPlacement.Maximized)
     ) {
         AppTheme(darkTheme = true) {
-            Scaffold(
-                modifier = Modifier
-                    .fillMaxSize()
-            ){
-                Navigator(NavTarget.Main()) { navigator ->
-                    NavHost(navigator)
-                }
+            Navigator(NavTarget.Main()) { navigator ->
+                NavHost(navigator)
             }
         }
     }

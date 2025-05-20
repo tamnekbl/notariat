@@ -8,6 +8,8 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
 
+
+
 // Таблица клиентов
 object Clients : IntIdTable("clients") {
     val name = text("name")
@@ -15,33 +17,6 @@ object Clients : IntIdTable("clients") {
     val address = text("address")
     val phoneNumber = text("phone_number")
 }
-
-class ClientDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<ClientDAO>(Clients)
-
-    val name by Clients.name
-    val profession by Clients.profession
-    val address by Clients.address
-    val phoneNumber by Clients.phoneNumber
-
-    fun toClient() = Client(
-        id = id.value,
-        name = name,
-        profession = profession,
-        address = address,
-        phoneNumber = phoneNumber
-    )
-}
-
-data class Client(
-    val id: Int,
-    val name: String,
-    val profession: String,
-    val address: String,
-    val phoneNumber: String
-)
-
-
 
 // Сделки
 object Deals : IntIdTable("deals") {
@@ -69,7 +44,7 @@ object DiscountsDeals : Table("discounts_deals") {
 object Services : IntIdTable("services") {
     val name = text("name")
     val description = text("description")
-    val price = float("price").nullable()
+    val price = float("price")
 }
 
 // Таблица связей услуг и сделок

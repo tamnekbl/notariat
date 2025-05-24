@@ -2,12 +2,12 @@ package db.dao
 
 import db.Discounts
 import db.DiscountsDeals
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class DiscountDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<DiscountDAO>(Discounts)
+class DiscountDAO(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<DiscountDAO>(Discounts)
 
     var name by Discounts.name
     var discountAmount by Discounts.discountAmount
@@ -24,7 +24,7 @@ class DiscountDAO(id: EntityID<Int>) : IntEntity(id) {
 }
 
 data class Discount(
-    val id: Int,
+    val id: Long,
     val name: String,
     val discountAmount: Float,
     val description: String

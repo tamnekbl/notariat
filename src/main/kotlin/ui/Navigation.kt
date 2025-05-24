@@ -11,10 +11,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import db.reps.ClientRepository
+import db.reps.DealRepository
 import db.reps.DiscountRepository
 import db.reps.ServiceRepository
 import ui.clients.ClientsModel
 import ui.clients.ClientsView
+import ui.deals.DealsModel
+import ui.deals.DealsView
 import ui.discounts.DiscountsModel
 import ui.discounts.DiscountsView
 import ui.services.ServicesModel
@@ -28,7 +31,10 @@ sealed class NavTarget(
 ) : Screen {
     class Deals : NavTarget("Deals", Icons.Default.Check, "deals") {
         @Composable
-        override fun Content() = EmptyView()
+        override fun Content() {
+            val model = rememberScreenModel { DealsModel(DealRepository()) }
+            DealsView(model)
+        }
     }
     class Clients : NavTarget("Clients", Icons.Default.Person, "clients") {
         @Composable

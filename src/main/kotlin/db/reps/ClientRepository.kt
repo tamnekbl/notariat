@@ -17,7 +17,7 @@ class ClientRepository {
         }.toClient()
     }
 
-    suspend fun getById(id: Int): Client? = suspendTransaction {
+    suspend fun getById(id: Long): Client? = suspendTransaction {
         ClientDAO.findById(id)?.toClient()
     }
 
@@ -25,7 +25,7 @@ class ClientRepository {
         ClientDAO.all().map { it.toClient() }
     }
 
-    suspend fun update(id: Int, updated: Client): Boolean = suspendTransaction {
+    suspend fun update(id: Long, updated: Client): Boolean = suspendTransaction {
         ClientDAO.findByIdAndUpdate(id){
             it.name = updated.name
             it.profession = updated.profession
@@ -34,7 +34,7 @@ class ClientRepository {
         } != null
     }
 
-    suspend fun delete(id: Int): Boolean = suspendTransaction {
+    suspend fun delete(id: Long): Boolean = suspendTransaction {
         ClientDAO.findById(id)?.delete() != null
     }
 }

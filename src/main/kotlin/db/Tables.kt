@@ -1,34 +1,30 @@
 package db
 
-import androidx.compose.ui.graphics.CloseSegment
-import org.jetbrains.exposed.dao.Entity
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Table
 
+import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.javatime.date
 
 
 // Таблица клиентов
-object Clients : IntIdTable("clients") {
-    val name = text("name")
-    val profession = text("profession")
-    val address = text("address")
-    val phoneNumber = text("phone_number")
+object Clients : LongIdTable("clients") {
+    val name = varchar("name", 256)
+    val profession = varchar("profession", 256)
+    val address = varchar("address", 512)
+    val phoneNumber = varchar("phone_number", 32)
 }
 
 // Сделки
-object Deals : IntIdTable("deals") {
-    val date = text("date")
+object Deals : LongIdTable("deals") {
+    val date = date("date")
     val commission = float("commission")
     val description = text("description")
-    val client = reference("client_id", Clients).nullable()
+    val clientId = reference("client_id", Clients)
 }
 
 // Скидки
-object Discounts : IntIdTable("discounts") {
-    val name = text("name")
+object Discounts : LongIdTable("discounts") {
+    val name = varchar("name", 128)
     val discountAmount = float("discount_amount")
     val description = text("description")
 }
@@ -41,8 +37,8 @@ object DiscountsDeals : Table("discounts_deals") {
 }
 
 // Услуги
-object Services : IntIdTable("services") {
-    val name = text("name")
+object Services : LongIdTable("services") {
+    val name = varchar("name", 128)
     val description = text("description")
     val price = float("price")
 }

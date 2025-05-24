@@ -1,39 +1,41 @@
 package db.reps
 
-import db.dao.ClientDAO
+import db.Clients
 import db.dao.Deal
+import db.dao.SimpleDeal
 import db.dao.DealDAO
 import db.suspendTransaction
+import org.jetbrains.exposed.dao.id.EntityID
 
 class DealRepository {
 
-    suspend fun create(deal: Deal): Deal = suspendTransaction {
+    suspend fun create(simpleDeal: SimpleDeal): SimpleDeal = suspendTransaction {
         DealDAO.new {
-            date = deal.date
-            commission = deal.commission
-            description = deal.description
-            client = deal.clientId?.let { ClientDAO.findById(it) }
-        }.toDeal()
+            date = simpleDeal.date
+            commission = simpleDeal.commission
+            description = simpleDeal.description
+            clientId = EntityID(simpleDeal.clientId, Clients)
+        }.toSimpleDeal()
     }
 
-    suspend fun getById(id: Int): Deal? = suspendTransaction {
+    suspend fun getById(id: Long): Deal? = suspendTransaction {
         DealDAO.findById(id)?.toDeal()
     }
 
-    suspend fun getAll(): List<Deal> = suspendTransaction {
-        DealDAO.all().map { it.toDeal() }
+    suspend fun getAll(): List<SimpleDeal> = suspendTransaction {
+        DealDAO.all().map { it.toSimpleDeal() }
     }
 
-    suspend fun update(id: Int, updated: Deal): Boolean = suspendTransaction {
+    suspend fun update(id: Long, updated: SimpleDeal): Boolean = suspendTransaction {
         DealDAO.findByIdAndUpdate(id) { deal ->
             deal.date = updated.date
             deal.commission = updated.commission
             deal.description = updated.description
-            deal.client = updated.clientId?.let { ClientDAO.findById(it) }
+            deal.clientId = EntityID(updated.clientId, Clients)
         } != null
     }
 
-    suspend fun delete(id: Int): Boolean = suspendTransaction {
+    suspend fun delete(id: Long): Boolean = suspendTransaction {
         DealDAO.findById(id)?.delete() != null
     }
 }

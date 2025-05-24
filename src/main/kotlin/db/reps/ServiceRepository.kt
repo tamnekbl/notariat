@@ -14,7 +14,7 @@ class ServiceRepository {
         }.toService()
     }
 
-    suspend fun getById(id: Int): Service? = suspendTransaction {
+    suspend fun getById(id: Long): Service? = suspendTransaction {
         ServiceDAO.findById(id)?.toService()
     }
 
@@ -22,7 +22,7 @@ class ServiceRepository {
         ServiceDAO.all().map { it.toService() }
     }
 
-    suspend fun update(id: Int, updated: Service): Boolean = suspendTransaction {
+    suspend fun update(id: Long, updated: Service): Boolean = suspendTransaction {
         ServiceDAO.findByIdAndUpdate(id) { service ->
             service.apply {
                 name = updated.name
@@ -32,7 +32,7 @@ class ServiceRepository {
         } != null
     }
 
-    suspend fun delete(id: Int): Boolean = suspendTransaction {
+    suspend fun delete(id: Long): Boolean = suspendTransaction {
         ServiceDAO.findById(id)?.delete() != null
     }
 }

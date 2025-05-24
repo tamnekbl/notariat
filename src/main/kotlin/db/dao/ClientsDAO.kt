@@ -1,13 +1,13 @@
 package db.dao
 
 import db.Clients
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 
-class ClientDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<ClientDAO>(Clients)
+class ClientDAO(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<ClientDAO>(Clients)
 
     var name by Clients.name
     var profession by Clients.profession
@@ -24,7 +24,7 @@ class ClientDAO(id: EntityID<Int>) : IntEntity(id) {
 }
 
 data class Client(
-    val id: Int,
+    val id: Long,
     val name: String,
     val profession: String,
     val address: String,

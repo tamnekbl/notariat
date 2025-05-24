@@ -2,12 +2,12 @@ package db.dao
 
 import db.Services
 import db.ServicesDeals
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class ServiceDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<ServiceDAO>(Services)
+class ServiceDAO(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<ServiceDAO>(Services)
 
     var name by Services.name
     var description by Services.description
@@ -24,7 +24,7 @@ class ServiceDAO(id: EntityID<Int>) : IntEntity(id) {
 }
 
 data class Service(
-    val id: Int,
+    val id: Long,
     val name: String,
     val description: String,
     val price: Float

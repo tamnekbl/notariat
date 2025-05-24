@@ -14,7 +14,7 @@ class DiscountRepository {
         }.toDiscount()
     }
 
-    suspend fun getById(id: Int): Discount? = suspendTransaction {
+    suspend fun getById(id: Long): Discount? = suspendTransaction {
         DiscountDAO.findById(id)?.toDiscount()
     }
 
@@ -22,7 +22,7 @@ class DiscountRepository {
         DiscountDAO.all().map { it.toDiscount() }
     }
 
-    suspend fun update(id: Int, updated: Discount): Boolean = suspendTransaction {
+    suspend fun update(id: Long, updated: Discount): Boolean = suspendTransaction {
         DiscountDAO.findByIdAndUpdate(id){ discount ->
             discount.apply {
                 name = updated.name
@@ -32,7 +32,7 @@ class DiscountRepository {
         } != null
     }
 
-    suspend fun delete(id: Int): Boolean = suspendTransaction {
+    suspend fun delete(id: Long): Boolean = suspendTransaction {
         DiscountDAO.findById(id)?.delete() != null
     }
 }

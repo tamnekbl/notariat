@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import ui.clients.SimpleTable
 import ui.utils.Toolbar
 import utils.Loading
-import utils.logging.Log
+import utils.res.StringsRes
 
 @Composable
 fun DiscountsView(model: DiscountsModel) {
@@ -27,7 +27,7 @@ fun DiscountsView(model: DiscountsModel) {
 
     Scaffold(
         topBar = {
-            Toolbar(title = "Discounts")
+            Toolbar(title = StringsRes.get("discounts"))
         }
     ) {
         Box(

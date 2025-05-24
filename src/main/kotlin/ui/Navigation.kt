@@ -1,11 +1,7 @@
 package ui
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -23,27 +19,30 @@ import ui.discounts.DiscountsView
 import ui.services.ServicesModel
 import ui.services.ServicesView
 import ui.utils.EmptyView
+import utils.res.StringsRes
 
 sealed class NavTarget(
     val name: String,
     val icon: ImageVector = Icons.Default.List,
     val route: String
 ) : Screen {
-    class Deals : NavTarget("Deals", Icons.Default.Check, "deals") {
+    class Deals : NavTarget(StringsRes.get("deals"), Icons.Default.Check, "deals") {
         @Composable
         override fun Content() {
             val model = rememberScreenModel { DealsModel(DealRepository()) }
             DealsView(model)
         }
     }
-    class Clients : NavTarget("Clients", Icons.Default.Person, "clients") {
+
+    class Clients : NavTarget(StringsRes.get("clients"), Icons.Default.Person, "clients") {
         @Composable
         override fun Content(){
             val model = rememberScreenModel { ClientsModel(ClientRepository()) }
             ClientsView(model)
         }
     }
-    class Services : NavTarget("Services", Icons.Default.List, "services") {
+
+    class Services : NavTarget(StringsRes.get("services"), Icons.Default.List, "services") {
         @Composable
         override fun Content() {
             val model = rememberScreenModel { ServicesModel(ServiceRepository()) }
@@ -51,7 +50,7 @@ sealed class NavTarget(
         }
     }
 
-    class Discounts : NavTarget("Discounts", Icons.Default.Add, "discounts") {
+    class Discounts : NavTarget(StringsRes.get("discounts"), Icons.Default.Add, "discounts") {
         @Composable
         override fun Content() {
             val model = rememberScreenModel { DiscountsModel(DiscountRepository()) }

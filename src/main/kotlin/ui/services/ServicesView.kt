@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import ui.clients.SimpleTable
 import ui.utils.Toolbar
 import utils.Loading
+import utils.res.StringsRes
 
 @Composable
 fun ServicesView(model: ServicesModel) {
@@ -26,7 +27,7 @@ fun ServicesView(model: ServicesModel) {
 
     Scaffold(
         topBar = {
-            Toolbar(title = "Services")
+            Toolbar(title = StringsRes.get("services"))
         }
     ) {
         Box(

@@ -10,7 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import ui.clients.SimpleTable
+import ui.utils.Table
 import ui.utils.Toolbar
 import utils.Loading
 import utils.res.StringsRes
@@ -46,7 +46,7 @@ fun ServicesView(model: ServicesModel) {
             }
 
             if (state.loading is Loading.Success)
-                SimpleTable(headers, rows)
+                Table(headers, rows) {}
             else
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)

@@ -1,9 +1,10 @@
 package db.reps
 
 import db.Clients
+import db.Deals
 import db.dao.Deal
-import db.dao.SimpleDeal
 import db.dao.DealDAO
+import db.dao.SimpleDeal
 import db.suspendTransaction
 import org.jetbrains.exposed.dao.id.EntityID
 
@@ -37,5 +38,10 @@ class DealRepository {
 
     suspend fun delete(id: Long): Boolean = suspendTransaction {
         DealDAO.findById(id)?.delete() != null
+    }
+
+    suspend fun getDealsByClient(clientId: Long): List<SimpleDeal> = suspendTransaction {
+        DealDAO.find { Deals.clientId eq clientId }
+            .map { it.toSimpleDeal() }
     }
 }

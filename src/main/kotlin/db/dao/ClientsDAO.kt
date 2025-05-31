@@ -30,3 +30,8 @@ data class Client(
     val address: String,
     val phoneNumber: String
 )
+
+data class ClientWithDeals(
+    val client: Client,
+    val deals: List<SimpleDeal>
+)

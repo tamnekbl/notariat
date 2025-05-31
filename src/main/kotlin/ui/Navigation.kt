@@ -37,7 +37,7 @@ sealed class NavTarget(
     class Clients : NavTarget(StringsRes.get("clients"), Icons.Default.Person, "clients") {
         @Composable
         override fun Content(){
-            val model = rememberScreenModel { ClientsModel(ClientRepository()) }
+            val model = rememberScreenModel { ClientsModel(ClientRepository(DealRepository())) }
             ClientsView(model)
         }
     }

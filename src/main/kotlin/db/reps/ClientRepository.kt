@@ -2,11 +2,12 @@ package db.reps
 
 import db.dao.Client
 import db.dao.ClientDAO
+import db.dao.ClientWithDeals
 import db.suspendTransaction
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
-class ClientRepository {
+class ClientRepository(
+    private val dealRepository: DealRepository
+) {
 
     suspend fun create(client: Client): Client = suspendTransaction {
         ClientDAO.new {
@@ -19,6 +20,16 @@ class ClientRepository {
 
     suspend fun getById(id: Long): Client? = suspendTransaction {
         ClientDAO.findById(id)?.toClient()
+    }
+
+    suspend fun getClientWithDeals(clientId: Long): ClientWithDeals? {
+        val client = suspendTransaction {
+            ClientDAO.findById(clientId)?.toClient()
+        } ?: return null
+
+        val deals = dealRepository.getDealsByClient(clientId) // Это уже вне suspendTransaction
+
+        return ClientWithDeals(client, deals)
     }
 
     suspend fun getAll(): List<Client> = suspendTransaction {

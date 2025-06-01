@@ -1,6 +1,8 @@
 package ui.discounts
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -16,6 +18,7 @@ import ui.clients.TextRow
 import ui.utils.*
 import utils.Loading
 import utils.Margin
+import utils.Size
 import utils.res.StringsRes
 
 @Composable
@@ -94,10 +97,13 @@ fun DiscountSingleView(
         return
 
     SingleView {
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .weight(1f)
+                .verticalScroll(scrollState)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(Margin.mx)
         ) {
             val discount = state.discount!!.discount
             val deals = state.discount!!.deals
@@ -107,7 +113,7 @@ fun DiscountSingleView(
             TextRow(label = StringsRes.get("description"), value = discount.description)
             Text(
                 text = "${StringsRes.get("deals")}:",
-                modifier = Modifier.width(120.dp),
+                modifier = Modifier.width(Size.h),
                 style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
             )
             Card(
@@ -123,12 +129,11 @@ fun DiscountSingleView(
             }
         }
         PageController(
-            modifier = Modifier
-                .align(Alignment.BottomCenter),
-            onPrev = { model.onAction(Action.Prev()) },
-            onNext = { model.onAction(Action.Next()) },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             canNext = state.currentDiscountIndex < model.discounts.size - 1,
             canPrev = state.currentDiscountIndex > 0
-        )
+        ) {
+            model.onAction(Action.PrevNext(it))
+        }
     }
 }

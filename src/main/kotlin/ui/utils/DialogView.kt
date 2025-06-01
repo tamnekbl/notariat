@@ -1,11 +1,6 @@
 package ui.utils
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -15,7 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import org.jetbrains.skia.Surface
+import utils.Margin
+import utils.Size
 
 @Composable
 fun Dialog1(
@@ -29,8 +25,8 @@ fun Dialog1(
     ) {
         Surface(
             modifier = Modifier
-                .width(600.dp)
-                .padding(horizontal = 8.dp)
+                .width(Size.h5)
+                .padding(horizontal = Margin.m)
                 .wrapContentHeight(),
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colors.surface

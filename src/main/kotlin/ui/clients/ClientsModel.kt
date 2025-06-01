@@ -47,16 +47,9 @@ class ClientsModel(
                 getClients()
             }
 
-            is Action.Next -> {
+            is Action.PrevNext -> {
                 mutableState.value = state.value.copy(
-                    currentClientIndex = state.value.currentClientIndex.inc().coerceAtMost(clients.size - 1)
-                )
-                getClient(clients[state.value.currentClientIndex].id)
-            }
-
-            is Action.Prev -> {
-                mutableState.value = state.value.copy(
-                    currentClientIndex = state.value.currentClientIndex.dec().coerceAtLeast(0)
+                    currentClientIndex = (state.value.currentClientIndex + action.delta).coerceIn(0, clients.size - 1)
                 )
                 getClient(clients[state.value.currentClientIndex].id)
             }

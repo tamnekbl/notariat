@@ -1,6 +1,8 @@
 package ui.clients
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import ui.utils.*
 import utils.Loading
 import utils.Margin
+import utils.Size
 import utils.logging.Log
 import utils.res.StringsRes
 
@@ -97,10 +100,13 @@ fun ClientSingleView(
         return
 
     SingleView {
+        val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .weight(1f)
+                .verticalScroll(scrollState)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(Margin.mx)
         ) {
             val client = state.client!!.client
             val deals = state.client!!.deals
@@ -110,7 +116,7 @@ fun ClientSingleView(
             TextRow(label = StringsRes.get("phone_number"), value = client.phoneNumber)
             Text(
                 text = "${StringsRes.get("deals")}:",
-                modifier = Modifier.width(120.dp),
+                modifier = Modifier.width(Size.h),
                 style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
             )
             Card(
@@ -125,14 +131,14 @@ fun ClientSingleView(
                 )
             }
         }
+
         PageController(
-            modifier = Modifier
-                .align(Alignment.BottomCenter),
-            onPrev = { model.onAction(Action.Prev()) },
-            onNext = { model.onAction(Action.Next()) },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             canNext = state.currentClientIndex < model.clients.size - 1,
             canPrev = state.currentClientIndex > 0
-        )
+        ) {
+            model.onAction(Action.PrevNext(it))
+        }
     }
 }
 
@@ -141,11 +147,11 @@ fun TextRow(label: String, value: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(Margin.mx)
     ) {
         Text(
             text = "$label:",
-            modifier = Modifier.width(120.dp),
+            modifier = Modifier.width(Size.h),
             style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
         )
         Text(

@@ -48,16 +48,12 @@ class DiscountsModel(
                 getDiscounts()
             }
 
-            is Action.Next -> {
+            is Action.PrevNext -> {
                 mutableState.value = state.value.copy(
-                    currentDiscountIndex = state.value.currentDiscountIndex.inc().coerceAtMost(discounts.size - 1)
-                )
-                getDiscount(discounts[state.value.currentDiscountIndex].id)
-            }
-
-            is Action.Prev -> {
-                mutableState.value = state.value.copy(
-                    currentDiscountIndex = state.value.currentDiscountIndex.dec().coerceAtLeast(0)
+                    currentDiscountIndex = (state.value.currentDiscountIndex + action.delta).coerceIn(
+                        0,
+                        discounts.size - 1
+                    )
                 )
                 getDiscount(discounts[state.value.currentDiscountIndex].id)
             }

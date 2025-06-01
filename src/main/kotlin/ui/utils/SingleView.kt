@@ -1,7 +1,7 @@
 package ui.utils
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SingleView(
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
         shape = MaterialTheme.shapes.medium,
@@ -22,7 +22,7 @@ fun SingleView(
             .padding(16.dp)
     ) {
         SelectionContainer {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)

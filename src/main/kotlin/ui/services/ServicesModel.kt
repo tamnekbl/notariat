@@ -47,16 +47,12 @@ class ServicesModel(
                 getServices()
             }
 
-            is Action.Next -> {
+            is Action.PrevNext -> {
                 mutableState.value = state.value.copy(
-                    currentServiceIndex = state.value.currentServiceIndex.inc().coerceAtMost(services.size - 1)
-                )
-                getService(services[state.value.currentServiceIndex].id)
-            }
-
-            is Action.Prev -> {
-                mutableState.value = state.value.copy(
-                    currentServiceIndex = state.value.currentServiceIndex.dec().coerceAtLeast(0)
+                    currentServiceIndex = (state.value.currentServiceIndex + action.delta).coerceIn(
+                        0,
+                        services.size - 1
+                    )
                 )
                 getService(services[state.value.currentServiceIndex].id)
             }

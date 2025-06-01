@@ -17,9 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerMoveFilter
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import utils.Margin
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
 
 @Composable
 fun <T : Any> DataClassTable(
@@ -27,12 +30,22 @@ fun <T : Any> DataClassTable(
     data: List<T>
 ) {
     if (data.isEmpty()) {
-        Text("Нет данных")
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = Margin.m),
+            text = "Нет данных",
+            textAlign = TextAlign.Center
+        )
         return
     }
 
     val kClass = data.first()::class
-    val props = kClass.memberProperties.map { it as KProperty1<T, *> }
+    val props: List<KProperty1<T, *>> = kClass.primaryConstructor!!
+        .parameters
+        .mapNotNull { param ->
+            kClass.memberProperties.find { it.name == param.name } as? KProperty1<T, *>
+        }
 
     val headers = props.map { it.name }
 
@@ -41,7 +54,7 @@ fun <T : Any> DataClassTable(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
+                .padding(vertical = Margin.s),
         ) {
             headers.forEach { header ->
                 Text(
@@ -49,7 +62,7 @@ fun <T : Any> DataClassTable(
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(4.dp)
+                        .padding(Margin.s)
                 )
             }
         }
@@ -61,14 +74,14 @@ fun <T : Any> DataClassTable(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = Margin.s)
             ) {
                 props.forEach { prop ->
                     Text(
                         text = prop.get(item).toString(),
                         modifier = Modifier
                             .weight(1f)
-                            .padding(4.dp)
+                            .padding(Margin.s)
                     )
                 }
             }

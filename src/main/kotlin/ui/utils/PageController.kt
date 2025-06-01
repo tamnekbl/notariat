@@ -15,10 +15,9 @@ import utils.Margin
 @Composable
 fun PageController(
     modifier: Modifier = Modifier,
-    onPrev: () -> Unit,
-    onNext: () -> Unit,
     canNext: Boolean = true,
-    canPrev: Boolean = true
+    canPrev: Boolean = true,
+    onDelta: (Int) -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -27,14 +26,14 @@ fun PageController(
     ) {
         IconButton(
             enabled = canPrev,
-            onClick = onPrev
+            onClick = { onDelta(-1) }
         ) {
             Icon(imageVector = Icons.Default.KeyboardArrowLeft, null)
         }
 
         IconButton(
             enabled = canNext,
-            onClick = onNext
+            onClick = { onDelta(1) }
         ) {
             Icon(imageVector = Icons.Default.KeyboardArrowRight, null)
         }

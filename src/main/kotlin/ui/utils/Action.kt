@@ -7,6 +7,5 @@ sealed class Action {
     class Delete(val id: Long) : Action()
     class Create() : Action()
     class Add() : Action()
-    class Next() : Action()
-    class Prev() : Action()
+    class PrevNext(val delta: Int) : Action()
 }

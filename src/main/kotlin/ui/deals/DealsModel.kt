@@ -5,11 +5,9 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import db.dao.SimpleDeal
 import db.reps.DealRepository
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import ui.utils.Action
+import ui.utils.ViewMode
 import utils.Loading
 import utils.logging.Log
 
@@ -21,6 +19,41 @@ class DealsModel(
 
     init {
         Log.i("Model Created")
+    }
+
+    fun onAction(action: Action) {
+        when (action) {
+            is Action.Add -> TODO()
+            is Action.Create -> TODO()
+            is Action.Delete -> TODO()
+            is Action.Edit -> {
+                setViewMode(ViewMode.EDIT)
+            }
+
+            is Action.SingleView -> {
+                setViewMode(ViewMode.SINGLE)
+                action.id?.let { id ->
+                    simpleDeals.indexOfFirst { it.id == id }
+                }?.let {
+                    mutableState.value = state.value.copy(currentDealIndex = it)
+                }
+                getDeal(
+                    dealId = action.id ?: simpleDeals[state.value.currentDealIndex].id
+                )
+            }
+
+            is Action.TableView -> {
+                setViewMode(ViewMode.TABLE)
+                getDeals()
+            }
+
+            is Action.PrevNext -> {
+                mutableState.value = state.value.copy(
+                    currentDealIndex = (state.value.currentDealIndex + action.delta).coerceIn(0, simpleDeals.size - 1)
+                )
+                getDeal(simpleDeals[state.value.currentDealIndex].id)
+            }
+        }
     }
 
     fun getDeals(){
@@ -37,5 +70,25 @@ class DealsModel(
             .catch { Log.e(it) }
             .launchIn(screenModelScope)
 
+    }
+
+    private fun getDeal(dealId: Long) {
+        flow { emit(repository) }
+            .map {
+                mutableState.value = state.value.copy(loading = Loading.Progress())
+                it.getById(dealId)
+            }
+            .onEach {
+                mutableState.value = state.value.copy(
+                    deal = it,
+                    loading = Loading.Success()
+                )
+            }
+            .catch { Log.e(it) }
+            .launchIn(screenModelScope)
+    }
+
+    private fun setViewMode(mode: ViewMode) {
+        mutableState.value = state.value.copy(viewMode = mode)
     }
 }

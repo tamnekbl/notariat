@@ -29,3 +29,8 @@ data class Service(
     val description: String,
     val price: Float
 )
+
+data class ServiceWithDeals(
+    val service: Service,
+    val deals: List<SimpleDeal>
+)

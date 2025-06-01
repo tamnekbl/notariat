@@ -2,6 +2,7 @@ package db.reps
 
 import db.dao.Service
 import db.dao.ServiceDAO
+import db.dao.ServiceWithDeals
 import db.suspendTransaction
 
 class ServiceRepository {
@@ -12,6 +13,15 @@ class ServiceRepository {
             description = service.description
             price = service.price
         }.toService()
+    }
+
+    suspend fun getWithDeals(id: Long): ServiceWithDeals? = suspendTransaction {
+        val serviceDAO = ServiceDAO.findById(id) ?: return@suspendTransaction null
+
+        ServiceWithDeals(
+            service = serviceDAO.toService(),
+            deals = serviceDAO.deals.map { it.toSimpleDeal() }
+        )
     }
 
     suspend fun getById(id: Long): Service? = suspendTransaction {

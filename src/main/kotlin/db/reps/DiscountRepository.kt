@@ -2,6 +2,7 @@ package db.reps
 
 import db.dao.Discount
 import db.dao.DiscountDAO
+import db.dao.DiscountWithDeals
 import db.suspendTransaction
 
 class DiscountRepository {
@@ -9,11 +10,20 @@ class DiscountRepository {
     suspend fun create(discount: Discount): Discount = suspendTransaction {
         DiscountDAO.new {
             name = discount.name
-            discountAmount = discount.discountAmount
+            discountAmount = discount.amount
             description = discount.description
         }.toDiscount()
     }
 
+    suspend fun getWithDeals(id: Long): DiscountWithDeals? = suspendTransaction {
+        val discountDAO = DiscountDAO.findById(id) ?: return@suspendTransaction null
+
+        DiscountWithDeals(
+            discount = discountDAO.toDiscount(),
+            deals = discountDAO.deals.map { it.toSimpleDeal() }
+        )
+    }
+    
     suspend fun getById(id: Long): Discount? = suspendTransaction {
         DiscountDAO.findById(id)?.toDiscount()
     }
@@ -26,7 +36,7 @@ class DiscountRepository {
         DiscountDAO.findByIdAndUpdate(id){ discount ->
             discount.apply {
                 name = updated.name
-                discountAmount = updated.discountAmount
+                discountAmount = updated.amount
                 description = updated.description
             }
         } != null

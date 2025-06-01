@@ -18,7 +18,7 @@ class DiscountDAO(id: EntityID<Long>) : LongEntity(id) {
     fun toDiscount() = Discount(
         id = id.value,
         name = name,
-        discountAmount = discountAmount,
+        amount = discountAmount,
         description = description
     )
 }
@@ -26,6 +26,11 @@ class DiscountDAO(id: EntityID<Long>) : LongEntity(id) {
 data class Discount(
     val id: Long,
     val name: String,
-    val discountAmount: Float,
+    val amount: Float,
     val description: String
+)
+
+data class DiscountWithDeals(
+    val discount: Discount,
+    val deals: List<SimpleDeal>
 )

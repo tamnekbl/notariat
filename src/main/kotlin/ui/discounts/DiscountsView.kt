@@ -1,18 +1,21 @@
 package ui.discounts
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import ui.utils.Table
-import ui.utils.Toolbar
+import androidx.compose.ui.unit.dp
+import ui.clients.TextRow
+import ui.utils.*
 import utils.Loading
+import utils.Margin
 import utils.res.StringsRes
 
 @Composable
@@ -27,7 +30,22 @@ fun DiscountsView(model: DiscountsModel) {
 
     Scaffold(
         topBar = {
-            Toolbar(title = StringsRes.get("discounts"))
+            Toolbar(
+                title = StringsRes.get("discounts")
+            ) {
+                if (state.viewMode == ViewMode.TABLE)
+                    IconButton(
+                        onClick = { model.onAction(Action.SingleView()) }
+                    ) {
+                        Icon(Icons.Default.Info, contentDescription = null)
+                    }
+                else
+                    IconButton(
+                        onClick = { model.onAction(Action.TableView()) }
+                    ) {
+                        Icon(Icons.Default.List, contentDescription = null)
+                    }
+            }
         }
     ) {
         Box(
@@ -42,15 +60,75 @@ fun DiscountsView(model: DiscountsModel) {
                 "DESCRIPTION" to 0.5f,
             )
             val rows = model.discounts.map {
-                listOf(it.id.toString(), it.name, it.discountAmount.toString(), it.description)
+                listOf(it.id.toString(), it.name, it.amount.toString(), it.description)
             }
 
-            if (state.loading is Loading.Success)
-                Table(headers, rows) {}
-            else
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            when (state.loading) {
+                is Loading.Success -> {
+                    when (state.viewMode) {
+                        ViewMode.TABLE -> Table(
+                            headers = headers,
+                            rows = rows,
+                            onAction = {
+                                model.onAction(it)
+                            }
+                        )
+
+                        ViewMode.SINGLE -> DiscountSingleView(model)
+                        ViewMode.EDIT -> TODO()
+                    }
+                }
+
+                else -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
+    }
+}
+
+@Composable
+fun DiscountSingleView(
+    model: DiscountsModel,
+) {
+    val state by model.state.collectAsState()
+    if (state.discount == null)
+        return
+
+    SingleView {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            val discount = state.discount!!.discount
+            val deals = state.discount!!.deals
+            TextRow(label = StringsRes.get("id"), value = discount.id.toString())
+            TextRow(label = StringsRes.get("name"), value = discount.name)
+            TextRow(label = StringsRes.get("amount"), value = discount.amount.toString())
+            TextRow(label = StringsRes.get("description"), value = discount.description)
+            Text(
+                text = "${StringsRes.get("deals")}:",
+                modifier = Modifier.width(120.dp),
+                style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
+            )
+            Card(
+                backgroundColor = MaterialTheme.colors.background.copy(0.5f),
+                elevation = 0.dp
+            ) {
+                DataClassTable(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Margin.m),
+                    data = deals
+                )
+            }
+        }
+        PageController(
+            modifier = Modifier
+                .align(Alignment.BottomCenter),
+            onPrev = { model.onAction(Action.Prev()) },
+            onNext = { model.onAction(Action.Next()) },
+            canNext = state.currentDiscountIndex < model.discounts.size - 1,
+            canPrev = state.currentDiscountIndex > 0
+        )
     }
 }

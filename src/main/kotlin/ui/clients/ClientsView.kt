@@ -39,7 +39,10 @@ fun ClientsView(model: ClientsModel) {
             ) {
                 if (state.viewMode == ViewMode.TABLE)
                     IconButton(
-                        onClick = { model.onAction(Action.SingleView()) }
+                        onClick = {
+                            model.onAction(Action.SetViewMode(ViewMode.SINGLE))
+                            model.onAction(Action.LoadSingle())
+                        }
                     ) {
                         Icon(Icons.Default.Info, contentDescription = null)
                     }
@@ -61,6 +64,7 @@ fun ClientsView(model: ClientsModel) {
             val headers = mapOf(
                 "ID" to 0.1f,
                 "NAME" to 0.5f,
+                "PROFESSION" to 0.5f,
                 "ADDRESS" to 0.5f,
                 "PHONE NUMBER" to 0.5f,
             )
@@ -78,12 +82,9 @@ fun ClientsView(model: ClientsModel) {
                                 model.onAction(it)
                             }
                         )
-
-                        ViewMode.SINGLE -> ClientSingleView(model)
-                        ViewMode.EDIT -> TODO()
+                        ViewMode.SINGLE, ViewMode.EDIT -> ClientSingleView(model)
                     }
                 }
-
                 else -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
@@ -96,11 +97,14 @@ fun ClientSingleView(
     model: ClientsModel,
 ) {
     val state by model.state.collectAsState()
-    if (state.client == null)
-        return
+    if (state.clientFull == null) return
 
     SingleView {
         val scrollState = rememberScrollState()
+        val clientToEdit = state.client
+        val clientToShow = state.clientFull!!.client
+        val deals = state.clientFull!!.deals
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -108,17 +112,38 @@ fun ClientSingleView(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(Margin.mx)
         ) {
-            val client = state.client!!.client
-            val deals = state.client!!.deals
-            TextRow(label = StringsRes.get("id"), value = client.id.toString())
-            TextRow(label = StringsRes.get("name"), value = client.name)
-            TextRow(label = StringsRes.get("address"), value = client.address)
-            TextRow(label = StringsRes.get("phone_number"), value = client.phoneNumber)
+            TextRow(label = StringsRes.get("id"), value = clientToEdit.id.toString())
+
+            if (state.viewMode.isEdit()) {
+                EditableRow(
+                    label = StringsRes.get("name"),
+                    value = clientToEdit.name,
+                    onValueChange = { model.updateClient(clientToEdit.copy(name = it)) })
+                EditableRow(
+                    label = StringsRes.get("profession"),
+                    value = clientToEdit.profession,
+                    onValueChange = { model.updateClient(clientToEdit.copy(profession = it)) })
+                EditableRow(
+                    label = StringsRes.get("address"),
+                    value = clientToEdit.address,
+                    onValueChange = { model.updateClient(clientToEdit.copy(address = it)) })
+                EditableRow(
+                    label = StringsRes.get("phone_number"),
+                    value = clientToEdit.phoneNumber,
+                    onValueChange = { model.updateClient(clientToEdit.copy(phoneNumber = it)) })
+            } else {
+                TextRow(label = StringsRes.get("name"), value = clientToShow.name)
+                TextRow(label = StringsRes.get("profession"), value = clientToShow.profession)
+                TextRow(label = StringsRes.get("address"), value = clientToShow.address)
+                TextRow(label = StringsRes.get("phone_number"), value = clientToShow.phoneNumber)
+            }
+
             Text(
                 text = "${StringsRes.get("deals")}:",
                 modifier = Modifier.width(Size.h),
                 style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
             )
+
             Card(
                 backgroundColor = MaterialTheme.colors.background.copy(0.5f),
                 elevation = 0.dp
@@ -132,32 +157,14 @@ fun ClientSingleView(
             }
         }
 
-        PageController(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            canNext = state.currentClientIndex < model.clients.size - 1,
-            canPrev = state.currentClientIndex > 0
+        SingleViewButtons(
+            isEditing = state.viewMode.isEdit(),
+            nextPageEnabled = state.currentClientIndex < model.clients.size - 1 && !state.viewMode.isEdit(),
+            prevPageEnabled = state.currentClientIndex > 0 && !state.viewMode.isEdit(),
         ) {
-            model.onAction(Action.PrevNext(it))
+            model.onAction(it)
         }
     }
 }
 
-@Composable
-fun TextRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Margin.mx)
-    ) {
-        Text(
-            text = "$label:",
-            modifier = Modifier.width(Size.h),
-            style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.body1
-        )
-    }
-}
 

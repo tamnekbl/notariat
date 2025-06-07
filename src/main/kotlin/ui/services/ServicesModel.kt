@@ -23,14 +23,14 @@ class ServicesModel(
 
     fun onAction(action: Action) {
         when (action) {
-            is Action.Add -> TODO()
+            is Action.Save -> TODO()
             is Action.Create -> TODO()
             is Action.Delete -> TODO()
-            is Action.Edit -> {
+            is Action.SetViewMode -> {
                 setViewMode(ViewMode.EDIT)
             }
 
-            is Action.SingleView -> {
+            is Action.LoadSingle -> {
                 setViewMode(ViewMode.SINGLE)
                 action.id?.let { id ->
                     services.indexOfFirst { it.id == id }

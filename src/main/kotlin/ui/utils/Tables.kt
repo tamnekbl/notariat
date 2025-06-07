@@ -136,7 +136,8 @@ fun Table(
                             .combinedClickable(
                                 onClick = {},
                                 onDoubleClick = {
-                                    onAction(Action.SingleView(row.first().toLongOrNull()))
+                                    onAction(Action.LoadSingle(row.first().toLongOrNull()))
+                                    onAction(Action.SetViewMode(ViewMode.SINGLE))
                                 }
                             )
                             .pointerMoveFilter(
@@ -168,7 +169,10 @@ fun Table(
                         AnimatedVisibility(visible = hoveredId != -1L) {
                             Row {
                                 IconButton(
-                                    onClick = { onAction(Action.Edit(hoveredId)) }
+                                    onClick = {
+                                        onAction(Action.SetViewMode(ViewMode.EDIT))
+                                        onAction(Action.LoadSingle(hoveredId))
+                                    }
                                 ) {
                                     Icon(Icons.Default.Edit, contentDescription = null)
                                 }

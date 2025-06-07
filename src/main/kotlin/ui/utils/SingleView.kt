@@ -30,6 +30,5 @@ fun SingleView(
                 content()
             }
         }
-
     }
 }

@@ -1,11 +1,11 @@
 package ui.utils
 
 sealed class Action {
-    class SingleView(val id: Long? = null) : Action()
+    class LoadSingle(val id: Long? = null) : Action()
     class TableView() : Action()
-    class Edit(val id: Long) : Action()
+    class SetViewMode(val viewMode: ViewMode) : Action()
     class Delete(val id: Long) : Action()
     class Create() : Action()
-    class Add() : Action()
+    class Save() : Action()
     class PrevNext(val delta: Int) : Action()
 }

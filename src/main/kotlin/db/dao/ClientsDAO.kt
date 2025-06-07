@@ -24,11 +24,11 @@ class ClientDAO(id: EntityID<Long>) : LongEntity(id) {
 }
 
 data class Client(
-    val id: Long,
-    val name: String,
-    val profession: String,
-    val address: String,
-    val phoneNumber: String
+    val id: Long = -1,
+    val name: String = "",
+    val profession: String = "",
+    val address: String = "",
+    val phoneNumber: String = ""
 )
 
 data class ClientWithDeals(

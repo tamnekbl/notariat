@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ui.clients.TextRow
 import ui.utils.*
 import utils.Loading
 import utils.Margin
@@ -40,7 +39,7 @@ fun DealsView(model: DealsModel) {
             ) {
                 if (state.viewMode == ViewMode.TABLE)
                     IconButton(
-                        onClick = { model.onAction(Action.SingleView()) }
+                        onClick = { model.onAction(Action.LoadSingle()) }
                     ) {
                         Icon(Icons.Default.Info, contentDescription = null)
                     }
@@ -80,8 +79,7 @@ fun DealsView(model: DealsModel) {
                             }
                         )
 
-                        ViewMode.SINGLE -> DealSingleView(model)
-                        ViewMode.EDIT -> TODO()
+                        ViewMode.SINGLE, ViewMode.EDIT -> DealSingleView(model)
                     }
                 }
 

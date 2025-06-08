@@ -58,6 +58,7 @@ class ClientsModel(
                 mutableState.value = state.value.copy(
                     currentClientIndex = (state.value.currentClientIndex + action.delta).coerceIn(0, clients.size - 1)
                 )
+                updateClient(clients[state.value.currentClientIndex])
                 getClientWithDeals(clients[state.value.currentClientIndex].id)
             }
         }

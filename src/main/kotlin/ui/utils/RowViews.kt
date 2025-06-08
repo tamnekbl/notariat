@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import utils.Margin
 import utils.Size
 
@@ -52,3 +54,28 @@ fun EditableRow(label: String, value: String, onValueChange: (String) -> Unit) {
         )
     }
 }
+
+@Composable
+fun EditableRow(label: String, value: Float, onValueChange: (Float) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Margin.mx)
+    ) {
+        Text(
+            text = "$label:",
+            modifier = Modifier.width(Size.h),
+            style = MaterialTheme.typography.subtitle1.copy(color = MaterialTheme.colors.primary)
+        )
+        TextField(
+            value = value.toString(),
+            onValueChange = {
+                onValueChange(it.toFloatOrNull() ?: 0f)
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.weight(1f),
+            singleLine = true,
+        )
+    }
+}
+

@@ -24,10 +24,10 @@ class ServiceDAO(id: EntityID<Long>) : LongEntity(id) {
 }
 
 data class Service(
-    val id: Long,
-    val name: String,
-    val description: String,
-    val price: Float
+    val id: Long = -1,
+    val name: String = "",
+    val description: String = "",
+    val price: Float = 0f
 )
 
 data class ServiceWithDeals(

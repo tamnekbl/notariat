@@ -37,7 +37,10 @@ fun DiscountsView(model: DiscountsModel) {
             ) {
                 if (state.viewMode == ViewMode.TABLE)
                     IconButton(
-                        onClick = { model.onAction(Action.LoadSingle()) }
+                        onClick = {
+                            model.onAction(Action.SetViewMode(ViewMode.SINGLE))
+                            model.onAction(Action.LoadSingle())
+                        }
                     ) {
                         Icon(Icons.Default.Info, contentDescription = null)
                     }
@@ -91,11 +94,15 @@ fun DiscountSingleView(
     model: DiscountsModel,
 ) {
     val state by model.state.collectAsState()
-    if (state.discount == null)
+    if (state.discountFull == null)
         return
 
     SingleView {
         val scrollState = rememberScrollState()
+        val discountToShow = state.discountFull!!.discount
+        val deals = state.discountFull!!.deals
+        val discountToEdit = state.discount
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -103,12 +110,26 @@ fun DiscountSingleView(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(Margin.mx)
         ) {
-            val discount = state.discount!!.discount
-            val deals = state.discount!!.deals
-            TextRow(label = StringsRes.get("id"), value = discount.id.toString())
-            TextRow(label = StringsRes.get("name"), value = discount.name)
-            TextRow(label = StringsRes.get("amount"), value = discount.amount.toString())
-            TextRow(label = StringsRes.get("description"), value = discount.description)
+            TextRow(label = StringsRes.get("id"), value = discountToShow.id.toString())
+
+            if (state.viewMode.isEdit()) {
+                EditableRow(
+                    label = StringsRes.get("name"),
+                    value = discountToEdit.name,
+                    onValueChange = { model.updateDiscount(discountToEdit.copy(name = it)) })
+                EditableRow(
+                    label = StringsRes.get("amount"),
+                    value = discountToEdit.amount,
+                    onValueChange = { model.updateDiscount(discountToEdit.copy(amount = it.coerceIn(0f, 1f))) })
+                EditableRow(
+                    label = StringsRes.get("description"),
+                    value = discountToEdit.description,
+                    onValueChange = { model.updateDiscount(discountToEdit.copy(description = it)) })
+            } else {
+                TextRow(label = StringsRes.get("name"), value = discountToShow.name)
+                TextRow(label = StringsRes.get("amount"), value = discountToShow.amount.toString())
+                TextRow(label = StringsRes.get("description"), value = discountToShow.description)
+            }
             Text(
                 text = "${StringsRes.get("deals")}:",
                 modifier = Modifier.width(Size.h),
@@ -126,12 +147,13 @@ fun DiscountSingleView(
                 )
             }
         }
-        PageController(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            canNext = state.currentDiscountIndex < model.discounts.size - 1,
-            canPrev = state.currentDiscountIndex > 0
+
+        SingleViewButtons(
+            isEditing = state.viewMode.isEdit(),
+            nextPageEnabled = state.currentDiscountIndex < model.discounts.size - 1 && !state.viewMode.isEdit(),
+            prevPageEnabled = state.currentDiscountIndex > 0 && !state.viewMode.isEdit(),
         ) {
-            model.onAction(Action.PrevNext(it))
+            model.onAction(it)
         }
     }
 }

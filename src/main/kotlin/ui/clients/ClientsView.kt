@@ -69,7 +69,7 @@ fun ClientsView(model: ClientsModel) {
                 "PHONE NUMBER" to 0.5f,
             )
             val rows = model.clients.map {
-                listOf(it.id.toString(), it.name, it.address, it.phoneNumber)
+                listOf(it.id.toString(), it.name, it.profession, it.address, it.phoneNumber)
             }
 
             when (state.loading) {

@@ -37,7 +37,10 @@ fun ServicesView(model: ServicesModel) {
             ) {
                 if (state.viewMode == ViewMode.TABLE)
                     IconButton(
-                        onClick = { model.onAction(Action.LoadSingle()) }
+                        onClick = {
+                            model.onAction(Action.SetViewMode(ViewMode.SINGLE))
+                            model.onAction(Action.LoadSingle())
+                        }
                     ) {
                         Icon(Icons.Default.Info, contentDescription = null)
                     }
@@ -91,12 +94,14 @@ fun ServiceSingleView(
     model: ServicesModel,
 ) {
     val state by model.state.collectAsState()
-    if (state.service == null)
+    if (state.serviceFull == null)
         return
 
     SingleView {
         val scrollState = rememberScrollState()
-
+        val serviceToShow = state.serviceFull!!.service
+        val deals = state.serviceFull!!.deals
+        val serviceToEdit = state.service
         /*        move to box
         VerticalScrollbar(
             modifier = Modifier.align(Alignment.End)
@@ -110,12 +115,29 @@ fun ServiceSingleView(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(Margin.mx)
         ) {
-            val service = state.service!!.service
-            val deals = state.service!!.deals
-            TextRow(label = StringsRes.get("id"), value = service.id.toString())
-            TextRow(label = StringsRes.get("name"), value = service.name)
-            TextRow(label = StringsRes.get("price"), value = service.price.toString())
-            TextRow(label = StringsRes.get("description"), value = service.description)
+
+            TextRow(label = StringsRes.get("id"), value = serviceToShow.id.toString())
+
+            if (state.viewMode.isEdit()) {
+                EditableRow(
+                    label = StringsRes.get("name"),
+                    value = serviceToEdit.name,
+                    onValueChange = { model.updateService(serviceToEdit.copy(name = it)) })
+                EditableRow(
+                    label = StringsRes.get("price"),
+                    value = serviceToEdit.price,
+                    onValueChange = { model.updateService(serviceToEdit.copy(price = it.coerceAtLeast(0f))) })
+                EditableRow(
+                    label = StringsRes.get("description"),
+                    value = serviceToEdit.description,
+                    onValueChange = { model.updateService(serviceToEdit.copy(description = it)) })
+
+            } else {
+                TextRow(label = StringsRes.get("name"), value = serviceToShow.name)
+                TextRow(label = StringsRes.get("price"), value = serviceToShow.price.toString())
+                TextRow(label = StringsRes.get("description"), value = serviceToShow.description)
+            }
+
             Text(
                 text = "${StringsRes.get("deals")}:",
                 modifier = Modifier.width(Size.h),
@@ -134,12 +156,12 @@ fun ServiceSingleView(
             }
         }
 
-        PageController(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            canNext = state.currentServiceIndex < model.services.size - 1,
-            canPrev = state.currentServiceIndex > 0
+        SingleViewButtons(
+            isEditing = state.viewMode.isEdit(),
+            nextPageEnabled = state.currentServiceIndex < model.services.size - 1 && !state.viewMode.isEdit(),
+            prevPageEnabled = state.currentServiceIndex > 0 && !state.viewMode.isEdit(),
         ) {
-            model.onAction(Action.PrevNext(it))
+            model.onAction(it)
         }
     }
 }

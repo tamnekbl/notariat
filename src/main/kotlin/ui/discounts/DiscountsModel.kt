@@ -24,20 +24,23 @@ class DiscountsModel(
 
     fun onAction(action: Action) {
         when (action) {
-            is Action.Save -> TODO()
+            is Action.Save -> {
+                saveDiscountWithChanges(discountId = state.value.discount.id)
+                setViewMode(ViewMode.SINGLE)
+            }
             is Action.Create -> TODO()
             is Action.Delete -> TODO()
             is Action.SetViewMode -> {
-                setViewMode(ViewMode.EDIT)
+                setViewMode(action.viewMode)
             }
 
             is Action.LoadSingle -> {
-                setViewMode(ViewMode.SINGLE)
                 action.id?.let { id ->
                     discounts.indexOfFirst { it.id == id }
                 }?.let {
                     mutableState.value = state.value.copy(currentDiscountIndex = it)
                 }
+                updateDiscount(discounts[state.value.currentDiscountIndex])
                 getDiscount(
                     discountId = action.id ?: discounts[state.value.currentDiscountIndex].id
                 )
@@ -55,9 +58,16 @@ class DiscountsModel(
                         discounts.size - 1
                     )
                 )
+                updateDiscount(discounts[state.value.currentDiscountIndex])
                 getDiscount(discounts[state.value.currentDiscountIndex].id)
             }
         }
+    }
+
+    fun updateDiscount(discount: Discount) {
+        mutableState.value = state.value.copy(
+            discount = discount
+        )
     }
     
     fun getDiscounts(){
@@ -84,9 +94,30 @@ class DiscountsModel(
             }
             .onEach {
                 mutableState.value = state.value.copy(
-                    discount = it,
+                    discountFull = it,
                     loading = Loading.Success()
                 )
+            }
+            .catch { Log.e(it) }
+            .launchIn(screenModelScope)
+    }
+
+    private fun saveDiscountWithChanges(discountId: Long) {
+        val discount = state.value.discount
+        flow { emit(repository) }
+            .map {
+                mutableState.value = state.value.copy(loading = Loading.Progress())
+                it.update(discountId, discount)
+            }
+            .onEach {
+                if (it) {
+                    mutableState.value = state.value.copy(
+                        discountFull = state.value.discountFull?.copy(discount = discount),
+                        loading = Loading.Success()
+                    )
+                    discounts[state.value.currentDiscountIndex] = discount
+                } else
+                    throw RuntimeException("bad update discount")
             }
             .catch { Log.e(it) }
             .launchIn(screenModelScope)

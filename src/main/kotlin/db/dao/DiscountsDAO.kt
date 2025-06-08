@@ -24,10 +24,10 @@ class DiscountDAO(id: EntityID<Long>) : LongEntity(id) {
 }
 
 data class Discount(
-    val id: Long,
-    val name: String,
-    val amount: Float,
-    val description: String
+    val id: Long = -1,
+    val name: String = "",
+    val amount: Float = 0f,
+    val description: String = ""
 )
 
 data class DiscountWithDeals(

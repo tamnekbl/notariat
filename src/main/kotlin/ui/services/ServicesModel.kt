@@ -23,20 +23,23 @@ class ServicesModel(
 
     fun onAction(action: Action) {
         when (action) {
-            is Action.Save -> TODO()
+            is Action.Save -> {
+                saveServiceWithChanges(serviceId = state.value.service.id)
+                setViewMode(ViewMode.SINGLE)
+            }
             is Action.Create -> TODO()
             is Action.Delete -> TODO()
             is Action.SetViewMode -> {
-                setViewMode(ViewMode.EDIT)
+                setViewMode(action.viewMode)
             }
 
             is Action.LoadSingle -> {
-                setViewMode(ViewMode.SINGLE)
                 action.id?.let { id ->
                     services.indexOfFirst { it.id == id }
                 }?.let {
                     mutableState.value = state.value.copy(currentServiceIndex = it)
                 }
+                updateService(services[state.value.currentServiceIndex])
                 getService(
                     serviceId = action.id ?: services[state.value.currentServiceIndex].id
                 )
@@ -54,11 +57,18 @@ class ServicesModel(
                         services.size - 1
                     )
                 )
+                updateService(services[state.value.currentServiceIndex])
                 getService(services[state.value.currentServiceIndex].id)
             }
         }
     }
-    
+
+    fun updateService(service: Service) {
+        mutableState.value = state.value.copy(
+            service = service
+        )
+    }
+
     fun getServices(){
         services.clear()
         flow { emit(repository)}
@@ -83,9 +93,30 @@ class ServicesModel(
             }
             .onEach {
                 mutableState.value = state.value.copy(
-                    service = it,
+                    serviceFull = it,
                     loading = Loading.Success()
                 )
+            }
+            .catch { Log.e(it) }
+            .launchIn(screenModelScope)
+    }
+
+    private fun saveServiceWithChanges(serviceId: Long) {
+        val service = state.value.service
+        flow { emit(repository) }
+            .map {
+                mutableState.value = state.value.copy(loading = Loading.Progress())
+                it.update(serviceId, service)
+            }
+            .onEach {
+                if (it) {
+                    mutableState.value = state.value.copy(
+                        serviceFull = state.value.serviceFull?.copy(service = service),
+                        loading = Loading.Success()
+                    )
+                    services[state.value.currentServiceIndex] = service
+                } else
+                    throw RuntimeException("bad update service")
             }
             .catch { Log.e(it) }
             .launchIn(screenModelScope)
